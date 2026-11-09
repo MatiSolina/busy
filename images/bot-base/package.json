@@ -1,0 +1,16 @@
+{
+  "name": "busy-bot-base-image",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "pnpm -C ../.. exec vitest run images/bot-base",
+    "test:ci": "sh ../../.github/scripts/test-image-ci.sh"
+  },
+  "devDependencies": {
+    "vitest": "5.0.5"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

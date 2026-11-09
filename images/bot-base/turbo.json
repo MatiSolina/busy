@@ -1,0 +1,27 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "test": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/templates/bot/agent/sandbox.ts",
+        "$TURBO_ROOT$/templates/bot/package-lock.json"
+      ],
+      "tags": ["!ci"]
+    },
+    "typecheck": {
+      "extends": false
+    },
+    "test:ci": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/templates/bot/agent/sandbox.ts",
+        "$TURBO_ROOT$/templates/bot/package-lock.json",
+        "$TURBO_ROOT$/.github/scripts/install-ci-tools.sh",
+        "$TURBO_ROOT$/.github/scripts/test-image-ci.sh"
+      ],
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    }
+  }
+}

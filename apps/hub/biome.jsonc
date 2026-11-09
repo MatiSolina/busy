@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/@biomejs/biome/configuration_schema.json",
+  "root": false,
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/vitest",
+    "../../biome.jsonc",
+    "ultracite/biome/react",
+    "ultracite/biome/next",
+    "ultracite/biome/drizzle"
+  ],
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  }
+}

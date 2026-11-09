@@ -1,0 +1,6 @@
+#!/bin/sh
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+pnpm check:changed
+TURBO_SCM_BASE=origin/main TURBO_SCM_HEAD=HEAD pnpm turbo run lint:next typecheck --affected

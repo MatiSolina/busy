@@ -1,0 +1,302 @@
+name: Ultracite
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      plan: ${{ steps.changes.outputs.plan }}
+    steps:
+      - name: Check out repository with history for change detection
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Select affected validation tasks
+        id: changes
+        env:
+          CI_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node .github/scripts/ci-plan.mjs
+
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: lint
+          packages: '["hub"]'
+
+      - name: Test CI selection policy
+        run: node --test .github/scripts/*.test.mjs
+
+      - name: Verify Ultracite setup
+        run: pnpm quality:doctor
+
+      - name: Check tooling configuration
+        run: pnpm check:tooling
+
+      - name: Collect Ultracite diagnostics
+        id: ultracite
+        continue-on-error: true
+        shell: bash
+        env:
+          ULTRACITE_REPORT: ${{ runner.temp }}/ultracite-report.json
+          ULTRACITE_EXIT_CODE: ${{ runner.temp }}/ultracite-exit-code
+        run: |
+          set +e
+          pnpm exec ultracite check --reporter=json --max-diagnostics=none > "$ULTRACITE_REPORT"
+          exit_code=$?
+          set -e
+          printf '%s\n' "$exit_code" > "$ULTRACITE_EXIT_CODE"
+          exit "$exit_code"
+
+      - name: Upload Ultracite report
+        if: ${{ always() && steps.ultracite.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ultracite-report
+          path: |
+            ${{ runner.temp }}/ultracite-report.json
+            ${{ runner.temp }}/ultracite-exit-code
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Summarize Ultracite diagnostics
+        if: ${{ always() && steps.ultracite.outcome != 'skipped' }}
+        shell: bash
+        env:
+          ULTRACITE_REPORT: ${{ runner.temp }}/ultracite-report.json
+          ULTRACITE_EXIT_CODE: ${{ runner.temp }}/ultracite-exit-code
+        run: |
+          node <<'NODE'
+          const fs = require("node:fs")
+
+          const reportPath = process.env.ULTRACITE_REPORT
+          const exitCodePath = process.env.ULTRACITE_EXIT_CODE
+          if (!fs.existsSync(reportPath)) throw new Error(`Missing ${reportPath}`)
+          if (!fs.existsSync(exitCodePath)) throw new Error(`Missing ${exitCodePath}`)
+
+          const raw = fs.readFileSync(reportPath, "utf8").trim()
+          if (!raw) throw new Error(`${reportPath} is empty`)
+
+          let report
+          try {
+            report = JSON.parse(raw)
+          } catch (error) {
+            throw new Error(`Invalid Ultracite JSON: ${error.message}`)
+          }
+
+          const summary = report?.summary
+          const diagnostics = report?.diagnostics
+          if (!summary || !Array.isArray(diagnostics)) {
+            throw new Error("Ultracite JSON is missing summary or diagnostics")
+          }
+
+          const exitCode = Number(fs.readFileSync(exitCodePath, "utf8").trim())
+          if (!Number.isInteger(exitCode)) throw new Error("Invalid Ultracite exit code")
+
+          if (Number(summary.diagnosticsNotPrinted ?? 0) !== 0) {
+            throw new Error("Ultracite report is truncated")
+          }
+
+          for (const diagnostic of diagnostics) {
+            const category = diagnostic?.category
+            const path = diagnostic?.location?.path
+            const isCheckDiagnostic = category === "format" || /^(lint|assist)\//.test(category ?? "")
+            if (!isCheckDiagnostic || typeof path !== "string") {
+              throw new Error(`Unexpected Ultracite diagnostic category or location: ${category ?? "unknown"}`)
+            }
+          }
+
+          const errors = Number(summary.errors ?? 0)
+          const warnings = Number(summary.warnings ?? 0)
+          const infos = Number(summary.infos ?? 0)
+          const total = errors + warnings + infos
+          const files = Number(summary.changed ?? 0) + Number(summary.unchanged ?? 0)
+
+          const categories = new Map()
+          for (const diagnostic of diagnostics) {
+            categories.set(diagnostic.category, (categories.get(diagnostic.category) ?? 0) + 1)
+          }
+          const topCategories = [...categories.entries()]
+            .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+            .slice(0, 10)
+
+          const lines = [
+            "## Ultracite diagnostics",
+            "",
+            `- Command exit code: \`${exitCode}\``,
+            `- Files checked: ${files}`,
+            `- Diagnostics: ${errors} errors, ${warnings} warnings, ${infos} infos (${total} total)`,
+            "- Full JSON: workflow artifact `ultracite-report`",
+            "",
+            "### Most frequent categories",
+            "",
+            ...(topCategories.length === 0
+              ? ["No diagnostics."]
+              : topCategories.map(([category, count]) => `- \`${category}\`: ${count}`)),
+            "",
+          ]
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${lines.join("\n")}\n`)
+
+          if (exitCode !== 0 || total !== 0) {
+            throw new Error(`Ultracite quality gate failed (exit ${exitCode}, ${total} diagnostics)`)
+          }
+          NODE
+
+      - name: Validate Next.js lint
+        if: ${{ always() && steps.ultracite.outcome != 'skipped' }}
+        run: pnpm lint:next
+
+  typecheck:
+    needs: changes
+    if: ${{ needs.changes.result == 'success' && fromJSON(needs.changes.outputs.plan).typecheck[0] != null }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: typecheck
+          packages: ${{ toJSON(fromJSON(needs.changes.outputs.plan).typecheck) }}
+      - name: Typecheck affected packages
+        env:
+          CI_PACKAGES: ${{ toJSON(fromJSON(needs.changes.outputs.plan).typecheck) }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { execFileSync } from "node:child_process"
+          const packages = JSON.parse(process.env.CI_PACKAGES)
+          execFileSync("pnpm", ["turbo", "run", "typecheck", ...packages.map(name => `--filter=${name}`)], { stdio: "inherit" })
+          NODE
+
+  build:
+    needs: changes
+    if: ${{ needs.changes.result == 'success' && fromJSON(needs.changes.outputs.plan).build[0] != null }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        package: ${{ fromJSON(needs.changes.outputs.plan).build }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: build-${{ matrix.package }}
+          packages: ${{ format('["{0}"]', matrix.package) }}
+
+      - name: Restore Next.js compiler cache
+        if: ${{ matrix.package != 'busy-bot' }}
+        uses: actions/cache@v6
+        with:
+          path: apps/${{ matrix.package }}/.next/cache
+          key: next-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ matrix.package }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            next-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ matrix.package }}-${{ hashFiles('pnpm-lock.yaml') }}-
+
+      - name: Build production hub
+        if: ${{ matrix.package == 'hub' }}
+        env:
+          VERCEL: "1"
+          VERCEL_DEPLOYMENT_ID: dpl_ci_runtime_check
+        run: pnpm turbo run build --filter=hub
+
+      # Always check the actual trace, even when Turbo restores the build.
+      - name: Check traced production runtime
+        if: ${{ matrix.package == 'hub' }}
+        env:
+          VERCEL: "1"
+          VERCEL_DEPLOYMENT_ID: dpl_ci_runtime_check
+        run: pnpm --filter hub check:runtime
+
+      - name: Build bot template
+        if: ${{ matrix.package != 'hub' }}
+        run: pnpm turbo run build --filter=${{ matrix.package }}
+
+  test-hub:
+    needs: changes
+    if: ${{ needs.changes.result == 'success' && fromJSON(needs.changes.outputs.plan).hub }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [ 1, 2 ]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: test-hub-${{ matrix.shard }}
+          packages: '["hub"]'
+      # Run every test; only partition the files, preserving Vitest isolation.
+      - name: Run hub tests
+        run: pnpm turbo run test --filter=hub --force -- --maxWorkers=2 --shard=${{ matrix.shard }}/2
+
+  test-bot:
+    needs: changes
+    if: ${{ needs.changes.result == 'success' && fromJSON(needs.changes.outputs.plan).bot[0] != null }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: test-bot
+          # Bot contract tests import hub deployment code.
+          packages: '["hub", "busy-bot", "busy-bot-base-image"]'
+      - name: Check bot context budget
+        run: pnpm check:context-budget
+      # Each Vitest process uses two workers; avoid oversubscribing the runner.
+      - name: Run affected bot template and image tests
+        env:
+          CI_PACKAGES: ${{ toJSON(fromJSON(needs.changes.outputs.plan).bot) }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { execFileSync } from "node:child_process"
+          const packages = JSON.parse(process.env.CI_PACKAGES)
+          execFileSync("pnpm", ["turbo", "run", "test", ...packages.map(name => `--filter=${name}`), "--concurrency=1", "--force", "--", "--maxWorkers=2"], { stdio: "inherit" })
+          NODE
+
+  # Required checks must succeed; only skips explicitly selected by the plan are valid.
+  quality:
+    if: ${{ always() }}
+    needs: [ changes, lint, typecheck, build, test-hub, test-bot, desktop ]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require every selected Linux validation to pass
+        env:
+          CI_PLAN: ${{ needs.changes.outputs.plan }}
+          CI_RESULTS: ${{ toJSON(needs) }}
+        run: node .github/scripts/check-ci-results.mjs
+
+  desktop:
+    needs: changes
+    if: ${{ needs.changes.result == 'success' && fromJSON(needs.changes.outputs.plan).desktop }}
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: desktop
+          packages: '["busy-desktop"]'
+      - name: Run desktop tests with the native updater tools
+        run: pnpm turbo run test --filter=busy-desktop --force -- --maxWorkers=2

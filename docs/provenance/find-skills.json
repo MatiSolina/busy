@@ -1,0 +1,24 @@
+{
+  "name": "find-skills",
+  "source": {
+    "repository": "https://github.com/vercel-labs/skills",
+    "commit": "92a9a34ac3bf88e695e468b90c7bf32f163d32c8",
+    "path": "skills/find-skills/SKILL.md",
+    "rawUrl": "https://raw.githubusercontent.com/vercel-labs/skills/92a9a34ac3bf88e695e468b90c7bf32f163d32c8/skills/find-skills/SKILL.md",
+    "sha256": "c00eeea0e13e74fe4a9d84ba0a8542205a1b736d65f13134fe1a6647eb14976f"
+  },
+  "license": {
+    "name": "MIT",
+    "copyright": "Copyright (c) 2026 Vercel, Inc.",
+    "file": "templates/bot/agent/skills/find-skills/references/LICENSE",
+    "sha256": "661142e53c313d2bb5e1b055f5c0a39001450ff1b5e27b89dc4bc7de9a6352ca"
+  },
+  "adaptation": {
+    "runtime": "Busy/Eve",
+    "mainFile": "templates/bot/agent/skills/find-skills/SKILL.md",
+    "upstreamCopy": "templates/bot/agent/skills/find-skills/references/upstream.md",
+    "toolReplacement": ["find_skills", "preview_skill", "install_skill"],
+    "packageExecution": "disabled",
+    "persistence": "Hub capability store; Eve dynamic resolver mounts supporting files in the sandbox"
+  }
+}

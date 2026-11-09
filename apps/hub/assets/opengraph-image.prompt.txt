@@ -1,0 +1,28 @@
+Created with the built-in imagegen tool, using the approved Busy v3 robot artwork as references.
+
+References:
+- design/identity/v3/assets/png/robot-lime.png
+- design/identity/v3/assets/png/robot-violet.png
+- design/identity/v3/assets/png/robot-orange.png
+- design/identity/v3/assets/png/busy-lockup-on-dark.png
+
+Prompt:
+Use case: ads-marketing. Create a spectacular, bespoke Open Graph social card for Busy, a personal team of persistent AI bots. This is a finished campaign artwork, not a brand guideline sheet or UI mockup.
+Output format: a wide horizontal card at exactly 2400 x 1260 pixels, aspect ratio 1.90476:1, intended to display at 1200 x 630. Respect generous 5% safe margins for all text.
+Reference roles: images 1, 2, 3 are the exact existing bot face designs and colors to translate into tactile three-dimensional physical objects. Image 4 is the approved logo reference ONLY: use its small wordmark relative to the robot (letters about 40% of the head height); do not enlarge the word busy to head height. The transparent backgrounds of references are not part of their designs.
+
+ART DIRECTION: a high-end editorial still life of a tiny crew of pixel computers, shot as beautiful physical design objects. Bold, charming, beautifully art-directed, collectible hardware. Pale cool white #F2F2F8 seamless studio floor and background, soft directional daylight, strong realistic contact shadows, refined physical materials, a little printed texture. Each robot is the actual broad rectangular pixel head extruded into a chunky shallow three-dimensional block, the exact stepped square corners kept rather than rounded. Matte colored shells, dark almost-black inset face screens, two tall vertical light eyes, and the THREE small square dark indicators ABOVE the screen kept in the same arrangement as reference. No mouths, limbs, antennas or invented facial details. Use the exact lime green #9CE452, violet #8E67CA and orange #E26616 from the references.
+
+COMPOSITION: make the right 55% an arresting sculptural ensemble. A huge lime robot head is the main hero, turned gently in three-quarter view but with its iconic front perfectly recognizable. A violet head slightly behind and higher, orange head in the foreground lower right, one smaller cream version tucked behind. Change their scale, depth and angle to create a lively ascending diagonal, an image of a little team rather than a neat row. Let the orange block or a shadow subtly exit the right/lower edge for confident framing. Everything has wonderful thickness, dimensional stepped sidewalls, subtle surface texture, exquisite light and grounded shadows. The group should feel purposefully assembled, not randomly floating. Keep these as recognizable pixel computer heads, not humanoid robots, not generic cubes or cute rounded toys.
+
+The left 43% is a confident, perfectly legible typographic composition with breathing room. Near the top left use a restrained Busy logo in charcoal on the light background: small lime original robot symbol beside the lowercase word "busy", with the reference's approved smaller wordmark ratio. Below, one big headline only, in beautifully spaced heavy contemporary grotesk sans-serif, black #101010:
+"Your own"
+"little team."
+Two lines; the second line can be slightly tighter but keep an elegant natural rhythm. This headline is the dominant text, not the wordmark. Make it genuinely big and memorable, around a third of the image height, with excellent kerning and no overlaps with objects.
+Text verbatim: "busy" and "Your own" and "little team." No other text. Absolutely no em dash, en dash, hyphens, subtitles, slogans, label stickers, fake product UI, hashtags or URLs.
+
+Finish: a distinctive product campaign by a strong independent design studio. Physical realism and playfulness together. The beauty is in the dramatic but clean composition, warm object personality and precise restrained typography. Do not produce a flat logo on a solid background, a conventional SaaS banner, generic AI sparkles, holograms, abstract blobs, blue-purple gradients, neon glows, glassmorphism, random decorative lines, grids, lens flares or excessive decoration.
+
+Revision: copy update
+
+Replace only the headline with "Own your Team" on two lines: "Own your" / "Team". Add a smaller single-line subtitle: "Your agent, your rules". Keep all robots, logo, background, lighting and composition unchanged.

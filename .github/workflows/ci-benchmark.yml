@@ -1,0 +1,72 @@
+name: CI benchmark
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: ${{ matrix.runner }} / ${{ matrix.cache }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        cache: [ installed, store ]
+        runner: [ ubuntu-latest, ubuntu-24.04-arm, macos-latest ]
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Start setup measurement
+        id: start
+        shell: bash
+        env:
+          RUNNER_LABEL: ${{ matrix.runner }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from "node:fs"
+          import { cpus } from "node:os"
+          const processors = cpus()
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+            `Runner: ${process.env.RUNNER_LABEL}; ${process.arch}; ${processors.length} CPUs; ${processors[0]?.model}; image ${process.env.ImageOS}.\n\n`)
+          NODE
+          echo "seconds=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      - uses: ./.github/actions/setup
+        id: setup
+        with:
+          cache-scope: benchmark-${{ matrix.runner }}-${{ matrix.cache }}
+          packages: ${{ runner.os == 'macOS' && '["busy-desktop"]' || '["hub"]' }}
+          dependency-cache: ${{ matrix.cache == 'installed' && 'true' || 'false' }}
+
+      - name: Record setup measurement
+        shell: bash
+        env:
+          START_SECONDS: ${{ steps.start.outputs.seconds }}
+          CACHE_HIT: ${{ steps.setup.outputs.dependency-cache-hit }}
+          RUNNER_LABEL: ${{ matrix.runner }}
+          CACHE_MODE: ${{ matrix.cache }}
+        run: |
+          elapsed=$(( $(date +%s) - START_SECONDS ))
+          {
+            echo "| Runner | Cache | Exact snapshot hit | Setup seconds |"
+            echo "| --- | --- | --- | ---: |"
+            echo "| $RUNNER_LABEL | $CACHE_MODE | ${CACHE_HIT:-false} | $elapsed |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run the complete package suite
+        env:
+          CI: "true"
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = macOS ]; then
+            pnpm turbo run test --filter=busy-desktop --force -- --maxWorkers=2
+          else
+            pnpm turbo run test --filter=hub --force -- --maxWorkers=2
+          fi

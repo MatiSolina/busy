@@ -1,0 +1,383 @@
+.detailPanel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 30px;
+  min-height: 0;
+  padding: 28px 32px 36px;
+  overflow-y: auto;
+  background: transparent;
+}
+
+.hero {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 0;
+}
+
+.heroIcon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  background: #fff;
+  border-radius: 12px;
+}
+
+.heroIcon img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.heroCopy {
+  flex: 1;
+  min-width: 0;
+}
+
+.heroTitleRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.heroTitleRow h2 {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+.heroCopy > p {
+  max-width: 680px;
+  margin-top: 5px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted-foreground);
+}
+
+.docsLink,
+.infoValueWithIcon a {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  text-decoration: none;
+}
+
+.docsLink:hover,
+.infoValueWithIcon a:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.docsLink svg,
+.infoValueWithIcon svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHeading {
+  display: flex;
+  gap: 16px;
+  align-items: end;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+
+.sectionHeading h3 {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.sectionHint {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.surface,
+.infoList {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.connectionList {
+  display: flex;
+  flex-direction: column;
+}
+
+.connectionRow,
+.infoRow {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 15px 18px;
+}
+
+.connectionRow + .connectionRow,
+.infoRow + .infoRow {
+  border-top: 1px solid var(--border);
+}
+
+.connectionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.connectionName {
+  font-size: 13px;
+}
+
+.connectionId {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.connectionDetails {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.connectionDetails summary,
+.technicalDetails summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.connectionDetails summary::before,
+.technicalDetails summary::before {
+  display: inline-block;
+  width: 12px;
+  margin-right: 3px;
+  content: "⌄";
+  transition: transform 150ms;
+}
+
+.connectionDetails[open] summary::before,
+.technicalDetails[open] summary::before {
+  transform: rotate(180deg);
+}
+
+.connectionDetails code {
+  display: block;
+  margin-top: 5px;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  overflow-wrap: anywhere;
+}
+
+.connectionError {
+  font-size: 11px;
+  color: var(--destructive);
+}
+
+.connectionStatus {
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.connectionStatus svg {
+  width: 14px;
+  height: 14px;
+}
+
+.connected {
+  color: #9ce452;
+}
+
+.emptyConnections {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 70px;
+  padding: 15px 18px;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.emptyConnections svg {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+}
+
+.settingsAction {
+  gap: 6px;
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.settingsAction svg {
+  width: 14px;
+  height: 14px;
+}
+
+.infoList {
+  display: flex;
+  flex-direction: column;
+}
+
+.infoRow dt {
+  font-size: 13px;
+  color: var(--foreground);
+}
+
+.infoRow dd {
+  max-width: 65%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 13px;
+  color: var(--muted-foreground);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.infoValueWithIcon {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.endpoint {
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 11px !important;
+}
+
+.technicalDetails {
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.technicalDetails > summary {
+  width: fit-content;
+  padding: 3px 2px;
+}
+
+.technicalDetails > .infoList {
+  margin-top: 10px;
+  border-radius: 14px;
+}
+
+.toolAllowlist {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.toolAllowlist legend {
+  padding: 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.toolAllowlist p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+.toolAllowlist label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12px;
+}
+
+.toolAllowlist label span {
+  display: grid;
+  gap: 2px;
+}
+
+.toolAllowlist small {
+  color: var(--muted-foreground);
+}
+
+.legacyToolsNotice {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+}
+
+.legacyToolsNotice p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted-foreground);
+}
+
+@media (max-width: 600px) {
+  .detailPanel {
+    gap: 24px;
+    padding: 22px 20px 28px;
+  }
+
+  .hero {
+    align-items: flex-start;
+  }
+
+  .heroTitleRow {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+  }
+
+  .sectionHeading {
+    flex-direction: column;
+    gap: 3px;
+    align-items: flex-start;
+  }
+
+  .connectionRow,
+  .infoRow {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .connectionStatus,
+  .infoRow dd {
+    max-width: 100%;
+    text-align: left;
+  }
+}

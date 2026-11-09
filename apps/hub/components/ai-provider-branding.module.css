@@ -1,0 +1,21 @@
+/* ChatGPT typography follows OpenAI's example; corners follow Busy's square
+   interface. See docs/ai-provider-assets.json. */
+@font-face {
+  font-family: "SIWC Inter";
+  src: url("/ai-providers/chatgpt-inter-medium.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+.chatgptButton {
+  gap: 12px;
+  height: 45px;
+  padding-inline: 20px;
+  font-family: "SIWC Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: 0;
+  border-radius: 0;
+}

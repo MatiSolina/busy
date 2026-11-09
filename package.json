@@ -1,0 +1,44 @@
+{
+  "name": "busy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "turbo run build",
+    "check": "turbo run //#check:repo",
+    "check:changed": "turbo run //#check:changed:repo",
+    "check:changed:repo": "ultracite check --changed --error-on-warnings",
+    "check:context-budget": "pnpm -C apps/hub exec tsx ../../templates/bot/scripts/context-budget.ts --check",
+    "check:repo": "ultracite check --error-on-warnings",
+    "check:staged": "turbo run //#check:staged:repo",
+    "check:staged:repo": "ultracite check --staged --error-on-warnings",
+    "check:tooling": "turbo run //#check:tooling:repo",
+    "check:tooling:repo": "ultracite check vercel.json biome.jsonc turbo.json pnpm-workspace.yaml package.json apps/hub/biome.jsonc apps/hub/eslint.config.mjs apps/hub/package.json apps/hub/turbo.json apps/desktop/package.json apps/desktop/turbo.json templates/bot/package.json templates/bot/turbo.json images/bot-base/package.json images/bot-base/turbo.json .vscode/settings.json .vscode/extensions.json .github",
+    "dev": "turbo run dev --filter=hub",
+    "doctor:vercel": "vercel doctor --cwd apps/hub",
+    "doctor:vercel:json": "vercel doctor --cwd apps/hub --json",
+    "fix": "ultracite fix",
+    "hooks:install": "git config extensions.worktreeConfig true && git config --worktree core.hooksPath .githooks",
+    "lint": "turbo run lint",
+    "lint:next": "turbo run lint:next --filter=hub",
+    "perf:ab": "pnpm -C apps/hub exec tsx evals/performance/paired.ts",
+    "perf:eval": "node apps/hub/evals/performance/local.mjs",
+    "quality:doctor": "turbo run //#quality:doctor:repo",
+    "quality:doctor:repo": "ultracite doctor",
+    "test": "turbo run test",
+    "test:ci-policy": "node --test .github/scripts/*.test.mjs",
+    "typecheck": "turbo run typecheck",
+    "update:context-budget": "pnpm -C apps/hub exec tsx ../../templates/bot/scripts/context-budget.ts --update-baseline"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.4",
+    "fast-check": "4.10.2",
+    "turbo": "2.11.10",
+    "ultracite": "8.1.1",
+    "vercel": "65.11.0",
+    "vitest": "^5.0.5"
+  },
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=24.15.0"
+  }
+}

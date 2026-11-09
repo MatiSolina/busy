@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Google Chrome
+Comment=Web browser, with the accessibility tree the bot uses
+Exec=desktop-browser human-open %U
+Icon=google-chrome
+Terminal=false
+MimeType=x-scheme-handler/http;x-scheme-handler/https;text/html;
+Categories=Network;WebBrowser;

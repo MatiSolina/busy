@@ -1,0 +1,92 @@
+{
+  "chromium-scale": {
+    "startupMs": {
+      "original": 1200.296374999998,
+      "candidate": 228.10725000000093
+    },
+    "speedup": 5.2619825761785,
+    "p95Ratios": {
+      "switchReadyMs": 0.2601412105275682,
+      "panelReadyMs": 0.17468473695796136,
+      "typingReadyMs": 0.6699182872492714,
+      "streamReadyMs": 0.31304071186900245,
+      "coldStreamReadyMs": 0.2840573612835686,
+      "enterChatRouteReadyMs": 0.21619810324487324,
+      "leaveChatRouteReadyMs": 0.57378415050123,
+      "returnChatRouteReadyMs": 0.6064910472031286,
+      "coldSwitchReadyMs": 0.2876346187143948,
+      "warmSwitchReadyMs": 0.5608036745186767
+    },
+    "interactionsPass": true,
+    "goalPass": true,
+    "evaluatorHash": "ce79544acb1cd97aff0db176e0f097262d0019d07bffe9a3903f473cb622beb1",
+    "sourcePatchHash": "ec7f66d4ea22daf34c0943507232476acdd3691a23e0eb1f53ba5b4abe437b07",
+    "sourceRef": "c512e0b31e3ef63ed25eb3a5b9d8700ecda678e3"
+  },
+  "chromium-mixed": {
+    "startupMs": {
+      "original": 4250.740290999995,
+      "candidate": 262.9653330000001
+    },
+    "speedup": 16.164641333160038,
+    "p95Ratios": {
+      "panelReadyMs": 0.101859267568394,
+      "typingReadyMs": 0.6643422063674579,
+      "streamReadyMs": 0.2996706925359386,
+      "coldStreamReadyMs": 0.3804398421408158,
+      "enterChatRouteReadyMs": 0.16927375305550715,
+      "leaveChatRouteReadyMs": 0.4046449071698273,
+      "returnChatRouteReadyMs": 0.5106230840938268
+    },
+    "interactionsPass": true,
+    "goalPass": true,
+    "evaluatorHash": "ce79544acb1cd97aff0db176e0f097262d0019d07bffe9a3903f473cb622beb1",
+    "sourcePatchHash": "ec7f66d4ea22daf34c0943507232476acdd3691a23e0eb1f53ba5b4abe437b07",
+    "sourceRef": "c512e0b31e3ef63ed25eb3a5b9d8700ecda678e3"
+  },
+  "electron-scale": {
+    "startupMs": {
+      "original": 718.3912089999994,
+      "candidate": 222.45416699999987
+    },
+    "speedup": 3.2293897600938166,
+    "p95Ratios": {
+      "switchReadyMs": 0.19032900961577945,
+      "panelReadyMs": 0.13157008120715358,
+      "typingReadyMs": 0.6058437224748177,
+      "streamReadyMs": 0.26998164228269694,
+      "coldStreamReadyMs": 0.2583704126278673,
+      "enterChatRouteReadyMs": 0.18600372278747504,
+      "leaveChatRouteReadyMs": 0.45560805828747425,
+      "returnChatRouteReadyMs": 0.45760893761287863,
+      "coldSwitchReadyMs": 0.18965946098338188,
+      "warmSwitchReadyMs": 0.43750801023810465
+    },
+    "interactionsPass": true,
+    "goalPass": true,
+    "evaluatorHash": "ce79544acb1cd97aff0db176e0f097262d0019d07bffe9a3903f473cb622beb1",
+    "sourcePatchHash": "ec7f66d4ea22daf34c0943507232476acdd3691a23e0eb1f53ba5b4abe437b07",
+    "sourceRef": "c512e0b31e3ef63ed25eb3a5b9d8700ecda678e3"
+  },
+  "electron-mixed": {
+    "startupMs": {
+      "original": 930.8164170000018,
+      "candidate": 243.07058300000062
+    },
+    "speedup": 3.8294079255160196,
+    "p95Ratios": {
+      "panelReadyMs": 0.06849111581217326,
+      "typingReadyMs": 0.41425165347728565,
+      "streamReadyMs": 0.2797295822152545,
+      "coldStreamReadyMs": 0.25786322544965135,
+      "enterChatRouteReadyMs": 0.15763581674780366,
+      "leaveChatRouteReadyMs": 0.3531740939224362,
+      "returnChatRouteReadyMs": 0.4015080072631175
+    },
+    "interactionsPass": true,
+    "goalPass": true,
+    "evaluatorHash": "ce79544acb1cd97aff0db176e0f097262d0019d07bffe9a3903f473cb622beb1",
+    "sourcePatchHash": "ec7f66d4ea22daf34c0943507232476acdd3691a23e0eb1f53ba5b4abe437b07",
+    "sourceRef": "c512e0b31e3ef63ed25eb3a5b9d8700ecda678e3"
+  }
+}

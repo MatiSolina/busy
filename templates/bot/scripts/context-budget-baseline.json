@@ -1,0 +1,42 @@
+{
+  "ceilings": {
+    "off": {
+      "toolCount": 83,
+      "promptToolCount": 68,
+      "deferredToolCount": 15,
+      "toolBytes": 58023,
+      "promptToolBytes": 43350,
+      "deferredToolBytes": 14673,
+      "instructionsBytes": 21802,
+      "guideBytes": 1378,
+      "systemBytes": 23180,
+      "promptBytes": 66530
+    },
+    "on": {
+      "toolCount": 84,
+      "promptToolCount": 34,
+      "deferredToolCount": 50,
+      "toolBytes": 58817,
+      "promptToolBytes": 23945,
+      "deferredToolBytes": 34872,
+      "instructionsBytes": 21934,
+      "guideBytes": 1378,
+      "systemBytes": 23312,
+      "promptBytes": 47257
+    },
+    "core": {
+      "toolCount": 84,
+      "promptToolCount": 22,
+      "deferredToolCount": 62,
+      "toolBytes": 59155,
+      "promptToolBytes": 10881,
+      "deferredToolBytes": 48274,
+      "instructionsBytes": 22102,
+      "guideBytes": 1378,
+      "systemBytes": 23480,
+      "promptBytes": 34361
+    }
+  },
+  "peerCount": 8,
+  "version": 1
+}

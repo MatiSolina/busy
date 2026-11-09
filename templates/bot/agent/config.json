@@ -1,0 +1,8 @@
+{
+  "slug": "template",
+  "name": "Bot",
+  "description": "General assistant.",
+  "instructions": "",
+  "model": "moonshotai/kimi-k3",
+  "fast": false
+}

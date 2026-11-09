@@ -1,0 +1,38 @@
+{
+  "name": "busy-bot",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#*": "./agent/*"
+  },
+  "scripts": {
+    "build": "eve build --skip-sandbox-prewarm",
+    "build:ci": "eve build --skip-sandbox-prewarm",
+    "build:deploy": "eve build",
+    "dev": "eve dev",
+    "eval": "eve eval",
+    "lint": "ultracite check . --error-on-warnings",
+    "test": "pnpm -C ../.. exec vitest run templates/bot",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@agent-browser/eve": "0.41.1",
+    "@ai-sdk/openai": "4.0.107",
+    "@vercel/blob": "2.8.2",
+    "@vercel/oidc": "4.0.5",
+    "@vercel/sandbox": "3.9.1",
+    "ai": "7.0.157",
+    "eve": "0.91.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "24.x",
+    "fast-check": "4.10.2",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5"
+  },
+  "engines": {
+    "node": "24.x"
+  }
+}

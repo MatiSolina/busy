@@ -1,0 +1,41 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ci": {
+    "bootstrapping": {
+      "installCommand": "pnpm install --frozen-lockfile --ignore-scripts && sh .github/scripts/install-ci-tools.sh",
+      "installEnv": {}
+    },
+    "tasks": [
+      {
+        "name": "hub#build",
+        "env": {
+          "VERCEL": {
+            "constant": {
+              "value": "1"
+            }
+          },
+          "VERCEL_DEPLOYMENT_ID": {
+            "constant": {
+              "value": "dpl_ci_runtime_check"
+            }
+          }
+        }
+      },
+      {
+        "name": "hub#check:runtime",
+        "env": {
+          "VERCEL": {
+            "constant": {
+              "value": "1"
+            }
+          },
+          "VERCEL_DEPLOYMENT_ID": {
+            "constant": {
+              "value": "dpl_ci_runtime_check"
+            }
+          }
+        }
+      }
+    ]
+  }
+}

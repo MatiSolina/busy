@@ -1,0 +1,209 @@
+name: UI performance
+
+on:
+  # ponytail: opt-in; ~15 min per push was the CI bottleneck. Add the `perf` label to run it on a PR.
+  pull_request:
+    types: [ opened, synchronize, reopened, labeled ]
+    paths:
+      - apps/hub/app/**
+      - apps/hub/app/api/**
+      - apps/hub/components/**
+      - apps/hub/lib/**
+      - apps/hub/lib/chat/**
+      - apps/hub/evals/**
+      - apps/hub/package.json
+      - apps/hub/next.config.ts
+      - apps/hub/postcss.config.mjs
+      - apps/hub/scripts/generate-markdown-ui.mjs
+      - apps/hub/scripts/compile-hints.ts
+      - apps/hub/scripts/check-compile-hints.mjs
+      - .github/scripts/performance-scope.mjs
+      - .github/scripts/performance-scope.test.mjs
+      - .github/scripts/performance-refs.mjs
+      - .github/scripts/performance-refs.test.mjs
+      - patches/**
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - .github/workflows/performance.yml
+  workflow_dispatch:
+    inputs:
+      baseline_ref:
+        description: Commit or branch to compare against
+        default: main
+        required: true
+      target_speedup:
+        description: Minimum startup speed ratio (3 for the improvement goal, 0.91 for regression checks)
+        default: "0.91"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: performance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scope:
+    name: Classify performance seams
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'perf')
+    runs-on: ubuntu-latest
+    outputs:
+      backend_required: ${{ steps.scope.outputs.backend_required }}
+      backend_tests: ${{ steps.scope.outputs.backend_tests }}
+      base_sha: ${{ steps.refs.outputs.base_sha }}
+      base_stale: ${{ steps.refs.outputs.base_stale }}
+      candidate_sha: ${{ steps.refs.outputs.candidate_sha }}
+      declared_base_sha: ${{ steps.refs.outputs.declared_base_sha }}
+      mode: ${{ steps.scope.outputs.mode }}
+      ui_required: ${{ steps.scope.outputs.ui_required }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 2
+          ref: ${{ github.sha }}
+      - name: Resolve immutable performance refs
+        id: refs
+        env:
+          CI_BASELINE_REF: ${{ inputs.baseline_ref }}
+          CI_CANDIDATE_SHA: ${{ github.sha }}
+          CI_EVENT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          CI_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          PERF_REFS_OUTPUT: ${{ github.workspace }}/.performance/performance-refs.json
+        run: node .github/scripts/performance-refs.mjs
+      - name: Classify changed seams
+        id: scope
+        env:
+          CI_BASE_SHA: ${{ steps.refs.outputs.base_sha }}
+          CI_BASE_STALE: ${{ steps.refs.outputs.base_stale }}
+          CI_CANDIDATE_SHA: ${{ steps.refs.outputs.candidate_sha }}
+          CI_DECLARED_BASE_SHA: ${{ steps.refs.outputs.declared_base_sha }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          PERF_SCOPE_OUTPUT: ${{ github.workspace }}/.performance/performance-scope.json
+        run: node .github/scripts/performance-scope.mjs
+      - uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: performance-scope
+          path: |
+            .performance/performance-refs.json
+            .performance/performance-scope.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+
+  backend-contract:
+    name: Backend seam contracts
+    needs: scope
+    if: needs.scope.outputs.backend_required == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          ref: ${{ needs.scope.outputs.candidate_sha }}
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: performance-backend-contract
+          packages: '["hub"]'
+      - name: Generate the Hub runtime template
+        run: pnpm -C apps/hub bundle-template
+      - name: Run affected backend contracts
+        env:
+          BACKEND_TESTS: ${{ needs.scope.outputs.backend_tests }}
+        run: pnpm exec vitest run $BACKEND_TESTS --pool=forks
+
+  compare:
+    needs: scope
+    if: needs.scope.outputs.ui_required == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        workload: [ scale, mixed ]
+    runs-on: ubuntu-latest
+    # Includes one unscored warmup evaluator run per arm (~40 s each).
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: busy_eval
+          POSTGRES_PASSWORD: busy_eval
+          POSTGRES_DB: busy_eval
+        ports: [ "5432:5432" ]
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://busy_eval:busy_eval@127.0.0.1:5432/busy_eval
+      SESSION_SECRET: isolated-performance-fixture-only
+      PERF_SAMPLES: "6"
+      PERF_WORKLOAD: ${{ matrix.workload }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          ref: ${{ needs.scope.outputs.candidate_sha }}
+      - uses: ./.github/actions/setup
+        with:
+          cache-scope: performance
+          packages: '["hub"]'
+      - uses: actions/checkout@v7
+        with:
+          path: .performance/base
+          ref: ${{ needs.scope.outputs.base_sha }}
+          fetch-depth: 1
+          persist-credentials: false
+      - name: Prepare baseline dependencies
+        run: pnpm -C .performance/base install --frozen-lockfile --ignore-scripts --filter=busy --filter=hub
+      - name: Prepare the synthetic database and browser
+        working-directory: apps/hub
+        run: |
+          pnpm exec drizzle-kit push --force
+          pnpm perf:seed
+          pnpm exec playwright install --with-deps chromium
+      - name: Run browser-only evaluator contracts
+        run: pnpm exec vitest run --config vitest.browser.config.ts
+      - name: Build both production versions
+        run: |
+          pnpm -C .performance/base/apps/hub build
+          pnpm -C apps/hub build
+      - name: Start isolated servers
+        run: |
+          pnpm -C .performance/base/apps/hub exec next start --hostname 127.0.0.1 --port 3148 > .performance/baseline-server.log 2>&1 &
+          pnpm -C apps/hub exec next start --hostname 127.0.0.1 --port 3147 > .performance/candidate-server.log 2>&1 &
+          node --input-type=module <<'NODE'
+          const deadline = Date.now() + 30000;
+          for (const port of [3148, 3147]) {
+            while (true) {
+              try { if ((await fetch(`http://127.0.0.1:${port}/login`)).ok) break; } catch {}
+              if (Date.now() > deadline) throw new Error("Production server failed to start");
+              await new Promise(resolve => setTimeout(resolve, 100));
+            }
+          }
+          NODE
+      - name: Run the bounded paired UI canary
+        working-directory: apps/hub
+        env:
+          PERF_CI_OUTPUT_DIR: ${{ github.workspace }}/.performance/ci-paired/${{ matrix.workload }}
+          PERF_CONTROL_SOURCE_DIR: ${{ github.workspace }}/.performance/base
+          PERF_CONTROL_URL: http://127.0.0.1:3148
+          PERF_BASE_REF_STALE: ${{ needs.scope.outputs.base_stale }}
+          PERF_DECLARED_BASE_REF: ${{ needs.scope.outputs.declared_base_sha }}
+          PERF_EXPECTED_CONTROL_REF: ${{ needs.scope.outputs.base_sha }}
+          PERF_EXPECTED_TREATMENT_REF: ${{ needs.scope.outputs.candidate_sha }}
+          PERF_TREATMENT_SOURCE_DIR: ${{ github.workspace }}
+          PERF_TREATMENT_URL: http://127.0.0.1:3147
+          PERF_TARGET_SPEEDUP: ${{ inputs.target_speedup || '0.91' }}
+          PERF_EXPECT_MARKDOWN_WORKER: "1"
+          PERF_EXPECT_STREAM_CLEANUP: "1"
+          PERF_VERIFY: "1"
+        run: pnpm exec tsx evals/performance/ci-paired.ts
+      - uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: ui-performance-${{ matrix.workload }}
+          path: .performance/ci-paired/${{ matrix.workload }}/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
