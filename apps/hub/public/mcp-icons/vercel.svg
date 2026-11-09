@@ -1,0 +1,16 @@
+<svg
+  fill="none"
+  height="100"
+  viewBox="0 0 115 100"
+  width="115"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <title>Vercel logo</title>
+  <path
+    clip-rule="evenodd"
+    d="M57.5 0 115 100H0z"
+    fill="black"
+    fill-rule="evenodd"
+    style="fill:black;fill-opacity:1;"
+  />
+</svg>

@@ -1,0 +1,682 @@
+.pix-avatar {
+  --pix-hover-animation: pix-avatar-hop;
+  --pix-hover-duration: 480ms;
+  --pix-work-animation: pix-avatar-working;
+  --pix-work-duration: 3.6s;
+  --pix-work-delay: 0s;
+  --pix-motion-scale: 1;
+  --pix-motion-direction: 1;
+  --pix-glance-x: 6px;
+  --pix-glance-y: 3px;
+  --pix-light-duration: 1.8s;
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+/* Each head gets a small movement vocabulary. The root variables can be tuned by
+   the avatar identity without changing the stable pointer hit area. */
+.pix-avatar[data-motion="bounce"] {
+  --pix-hover-animation: pix-avatar-hop;
+  --pix-work-animation: pix-avatar-working;
+}
+
+.pix-avatar[data-motion="wiggle"] {
+  --pix-hover-animation: pix-avatar-wiggle;
+  --pix-work-animation: pix-avatar-wiggle-working;
+}
+
+.pix-avatar[data-motion="nod"] {
+  --pix-hover-animation: pix-avatar-nod;
+  --pix-work-animation: pix-avatar-nod-working;
+}
+
+.pix-avatar[data-motion="peek"] {
+  --pix-hover-animation: pix-avatar-peek;
+  --pix-work-animation: pix-avatar-peek-working;
+}
+
+.pix-avatar[data-motion="sway"] {
+  --pix-hover-animation: pix-avatar-sway;
+  --pix-work-animation: pix-avatar-sway-working;
+}
+
+.pix-avatar[data-motion="pop"] {
+  --pix-hover-animation: pix-avatar-pop;
+  --pix-work-animation: pix-avatar-pop-working;
+}
+
+.pix-avatar[data-motion="shuffle"] {
+  --pix-hover-animation: pix-avatar-shuffle;
+  --pix-work-animation: pix-avatar-shuffle-working;
+}
+
+.pix-avatar[data-motion="float"] {
+  --pix-hover-animation: pix-avatar-float;
+  --pix-work-animation: pix-avatar-float-working;
+}
+
+/* Keep the hit area still while independent layers hop, work, and look around. */
+.pix-avatar-hop,
+.pix-avatar-body,
+.pix-avatar-tilt {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  transform-origin: 50% 80%;
+}
+
+.pix-avatar-tilt {
+  transform: rotate(var(--pix-tilt, 0deg));
+  transition: transform 180ms ease-out;
+}
+
+.pix-avatar-gaze {
+  transform: translate(var(--pix-look-x, 0px), var(--pix-look-y, 0px));
+  transition: transform 120ms ease-out;
+}
+
+.pix-avatar[data-pointing] .pix-avatar-hop {
+  animation-name: var(--pix-hover-animation, pix-avatar-hop);
+  animation-duration: var(--pix-hover-duration, 480ms);
+  animation-timing-function: cubic-bezier(0.22, 0.7, 0.3, 1);
+  animation-fill-mode: both;
+}
+
+.pix-avatar-working {
+  animation-name: var(--pix-work-animation, pix-avatar-working);
+  animation-duration: var(--pix-work-duration, 3.6s);
+  animation-timing-function: ease-in-out;
+  animation-delay: var(--pix-work-delay, 0s);
+  animation-iteration-count: infinite;
+}
+
+.pix-avatar-glance {
+  animation-name: pix-avatar-glance;
+  animation-duration: var(--pix-work-duration, 3.6s);
+  animation-timing-function: ease-in-out;
+  animation-delay: var(--pix-work-delay, 0s);
+  animation-iteration-count: infinite;
+}
+
+/*
+ * Busy's robots are drawn in line, as on busybot.dev: the outline in the
+ * current text color at one width at every size, a black screen that still
+ * hides the back of a costume, and the lights in the bot's own color.
+ */
+.pix-avatar-line {
+  stroke: currentcolor;
+  stroke-width: var(--pix-stroke, 1.5px);
+  vector-effect: non-scaling-stroke;
+}
+
+.pix-avatar-screen {
+  fill: var(--pix-screen, var(--background, #000000));
+}
+
+.pix-avatar-working .pix-avatar-lights rect {
+  animation-name: pix-avatar-indicator;
+  animation-duration: var(--pix-light-duration, 1.8s);
+  animation-timing-function: steps(1, end);
+  animation-iteration-count: infinite;
+}
+
+.pix-avatar-working .pix-avatar-lights rect:nth-child(2) {
+  animation-delay: 200ms;
+}
+
+.pix-avatar-working .pix-avatar-lights rect:nth-child(3) {
+  animation-delay: 400ms;
+}
+
+/* Give attention to the pointer, then return to the working rhythm on leave. */
+.pix-avatar[data-pointing] .pix-avatar-working,
+.pix-avatar[data-pointing] .pix-avatar-glance {
+  animation: none;
+}
+
+@keyframes pix-avatar-hop {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+  16% {
+    transform: translateY(calc(2% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          -1deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(
+        calc(1 + 0.05 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.06 * var(--pix-motion-scale, 1))
+      );
+  }
+  43% {
+    transform: translateY(calc(-16% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(2deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 - 0.03 * var(--pix-motion-scale, 1)),
+        calc(1 + 0.04 * var(--pix-motion-scale, 1))
+      );
+  }
+  72% {
+    transform: translateY(0)
+      rotate(
+        calc(
+          -1deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(
+        calc(1 + 0.04 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.04 * var(--pix-motion-scale, 1))
+      );
+  }
+  87% {
+    transform: translateY(calc(-3% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          0.5deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(1);
+  }
+}
+
+@keyframes pix-avatar-working {
+  0%,
+  18%,
+  48%,
+  78%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  28%,
+  39% {
+    transform: translateY(calc(-4% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          -4deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+  33%,
+  44% {
+    transform: translateY(calc(2% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          -2deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+  61% {
+    transform: translateY(calc(-3% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(4deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+  69% {
+    transform: translateY(calc(1% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(2deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+}
+
+@keyframes pix-avatar-wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  22% {
+    transform: rotate(
+        calc(
+          -8deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(
+        calc(1 + 0.03 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.03 * var(--pix-motion-scale, 1))
+      );
+  }
+  48% {
+    transform: rotate(
+        calc(7deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 + 0.03 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.03 * var(--pix-motion-scale, 1))
+      );
+  }
+  72% {
+    transform: rotate(
+        calc(
+          -3deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(1);
+  }
+}
+
+@keyframes pix-avatar-wiggle-working {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20%,
+  60% {
+    transform: rotate(
+        calc(
+          -3deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      translateY(calc(-2% * var(--pix-motion-scale, 1)));
+  }
+  40%,
+  80% {
+    transform: rotate(
+        calc(3deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      translateY(calc(1% * var(--pix-motion-scale, 1)));
+  }
+}
+
+@keyframes pix-avatar-nod {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  36% {
+    transform: rotate(
+        calc(9deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 - 0.04 * var(--pix-motion-scale, 1)),
+        calc(1 + 0.04 * var(--pix-motion-scale, 1))
+      );
+  }
+  62% {
+    transform: rotate(
+        calc(
+          -2deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(
+        calc(1 + 0.02 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.02 * var(--pix-motion-scale, 1))
+      );
+  }
+}
+
+@keyframes pix-avatar-nod-working {
+  0%,
+  58%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  67% {
+    transform: rotate(
+        calc(4deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      translateY(calc(3% * var(--pix-motion-scale, 1)));
+  }
+  76% {
+    transform: rotate(
+        calc(
+          -2deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      translateY(calc(-1% * var(--pix-motion-scale, 1)));
+  }
+}
+
+@keyframes pix-avatar-peek {
+  0%,
+  100% {
+    transform: translateX(0) scale(1);
+  }
+  34% {
+    transform: translateX(
+        calc(9% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(1deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 + 0.03 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.02 * var(--pix-motion-scale, 1))
+      );
+  }
+  58% {
+    transform: translateX(
+        calc(9% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(1deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(1);
+  }
+}
+
+@keyframes pix-avatar-peek-working {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  31%,
+  48% {
+    transform: translateX(
+        calc(3% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(2deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+  39%,
+  56% {
+    transform: translateX(
+        calc(-2% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(0);
+  }
+}
+
+@keyframes pix-avatar-sway {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  28% {
+    transform: translateY(calc(-7% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          -5deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+  56% {
+    transform: translateY(0)
+      rotate(
+        calc(5deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+  78% {
+    transform: translateY(calc(-2% * var(--pix-motion-scale, 1))) rotate(0);
+  }
+}
+
+@keyframes pix-avatar-sway-working {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25%,
+  75% {
+    transform: translateY(calc(-3% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(2deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+  50% {
+    transform: translateY(calc(2% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          -2deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+}
+
+@keyframes pix-avatar-pop {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  28% {
+    transform: rotate(
+        calc(2deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 + 0.12 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.1 * var(--pix-motion-scale, 1))
+      );
+  }
+  54% {
+    transform: translateY(
+        calc(-9% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(
+          -1deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(
+        calc(1 - 0.06 * var(--pix-motion-scale, 1)),
+        calc(1 + 0.07 * var(--pix-motion-scale, 1))
+      );
+  }
+  76% {
+    transform: rotate(
+        calc(
+          0.5deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(
+        calc(1 + 0.03 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.02 * var(--pix-motion-scale, 1))
+      );
+  }
+}
+
+@keyframes pix-avatar-pop-working {
+  0%,
+  86%,
+  100% {
+    transform: scale(1);
+  }
+  90% {
+    transform: scale(
+      calc(1 + 0.04 * var(--pix-motion-scale, 1)),
+      calc(1 - 0.04 * var(--pix-motion-scale, 1))
+    );
+  }
+  94% {
+    transform: translateY(
+        calc(-3% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 - 0.02 * var(--pix-motion-scale, 1)),
+        calc(1 + 0.03 * var(--pix-motion-scale, 1))
+      );
+  }
+}
+
+@keyframes pix-avatar-shuffle {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(
+        calc(5% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1)),
+        calc(-4% * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(
+          -4deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+  50% {
+    transform: translate(
+        calc(-4% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1)),
+        0
+      )
+      rotate(
+        calc(4deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+  75% {
+    transform: translate(
+        calc(3% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1)),
+        calc(-2% * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(
+          -2deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+}
+
+@keyframes pix-avatar-shuffle-working {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  24%,
+  72% {
+    transform: translateX(
+        calc(2% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(2deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+  48% {
+    transform: translateX(
+        calc(-2% * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      rotate(
+        calc(
+          -2deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      );
+  }
+}
+
+@keyframes pix-avatar-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  42% {
+    transform: translateY(calc(-12% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(1deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      )
+      scale(
+        calc(1 + 0.03 * var(--pix-motion-scale, 1)),
+        calc(1 - 0.02 * var(--pix-motion-scale, 1))
+      );
+  }
+  68% {
+    transform: translateY(calc(-5% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(
+          -0.5deg *
+          var(--pix-motion-direction, 1) *
+          var(--pix-motion-scale, 1)
+        )
+      )
+      scale(1);
+  }
+}
+
+@keyframes pix-avatar-float-working {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(-5% * var(--pix-motion-scale, 1)))
+      rotate(
+        calc(1deg * var(--pix-motion-direction, 1) * var(--pix-motion-scale, 1))
+      );
+  }
+}
+
+@keyframes pix-avatar-glance {
+  0%,
+  18%,
+  48%,
+  78%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25%,
+  44% {
+    transform: translate(var(--pix-glance-x, 6px), var(--pix-glance-y, 3px));
+  }
+  58%,
+  70% {
+    transform: translate(
+      calc(var(--pix-glance-x, 6px) * -0.8),
+      calc(var(--pix-glance-y, 3px) * 0.33)
+    );
+  }
+}
+
+@keyframes pix-avatar-indicator {
+  0%,
+  35%,
+  100% {
+    opacity: 1;
+  }
+  15% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pix-avatar-hop,
+  .pix-avatar-working,
+  .pix-avatar-glance,
+  .pix-avatar-working .pix-avatar-lights rect,
+  .pix-avatar[data-pointing] .pix-avatar-hop {
+    animation: none;
+  }
+
+  .pix-avatar-tilt,
+  .pix-avatar-gaze {
+    transform: none;
+    transition: none;
+  }
+}

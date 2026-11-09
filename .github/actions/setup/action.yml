@@ -1,0 +1,110 @@
+name: Set up Busy CI
+description: Install the workspace and restore task results for this job.
+
+inputs:
+  cache-scope:
+    description: Keep parallel jobs from competing for the same immutable cache key.
+    required: true
+  packages:
+    description: JSON array of workspaces to install, always including root tooling.
+    default: "[]"
+  dependency-cache:
+    description: Restore installed dependencies; disable only for baseline measurements.
+    default: "true"
+
+outputs:
+  dependency-cache-hit:
+    description: Whether the exact installed dependency snapshot was restored.
+    value: ${{ steps.dependencies.outputs.cache-hit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version: 24.18.0
+
+    - name: Set up pnpm
+      uses: pnpm/action-setup@v6
+      with:
+        package_json_file: package.json
+        run_install: false
+        cache: false
+
+    - name: Identify dependency snapshot
+      id: snapshot
+      shell: bash
+      env:
+        CI_PACKAGES: ${{ inputs.packages }}
+      run: |
+        node --input-type=module <<'NODE'
+        import { execFileSync } from "node:child_process"
+        import { createHash } from "node:crypto"
+        import { appendFileSync } from "node:fs"
+        const packages = JSON.parse(process.env.CI_PACKAGES)
+        const selected = packages.length ? [...new Set(["busy", ...packages])].sort() : []
+        const identity = JSON.stringify({
+          packages: selected,
+          node: process.version,
+          pnpm: execFileSync("pnpm", ["--version"], { encoding: "utf8" }).trim(),
+          image: process.env.ImageOS,
+          install: "frozen-lockfile,ignore-scripts",
+        })
+        const id = createHash("sha256").update(identity).digest("hex")
+        const store = execFileSync("pnpm", ["store", "path", "--silent"], { encoding: "utf8" }).trim()
+        appendFileSync(process.env.GITHUB_OUTPUT, `id=${id}\nstore=${store}\narch=${process.arch}\n`)
+        NODE
+
+    # Exact matches only: a partial snapshot must never skip pnpm's validation.
+    - name: Restore installed dependencies
+      id: dependencies
+      if: ${{ inputs.dependency-cache == 'true' }}
+      uses: actions/cache/restore@v6
+      with:
+        path: |
+          node_modules
+          apps/*/node_modules
+          images/*/node_modules
+          templates/*/node_modules
+        key: deps-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.snapshot.outputs.id }}-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml', 'package.json', 'apps/*/package.json', 'images/*/package.json', 'templates/*/package.json', '**/.npmrc', '.npmrc', '.pnpmfile.*', '.github/actions/setup/action.yml') }}
+
+    - name: Restore pnpm store on snapshot miss
+      if: ${{ steps.dependencies.outputs.cache-hit != 'true' }}
+      uses: actions/cache@v6
+      with:
+        path: ${{ steps.snapshot.outputs.store }}
+        key: pnpm-cache-${{ runner.os }}-${{ steps.snapshot.outputs.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+
+    - name: Install dependencies
+      if: ${{ steps.dependencies.outputs.cache-hit != 'true' }}
+      shell: bash
+      env:
+        CI_PACKAGES: ${{ inputs.packages }}
+      run: |
+        node --input-type=module <<'NODE'
+        import { execFileSync } from "node:child_process"
+        const packages = JSON.parse(process.env.CI_PACKAGES)
+        const selected = packages.length ? [...new Set(["busy", ...packages])] : []
+        execFileSync("pnpm", ["install", "--frozen-lockfile", "--ignore-scripts", ...selected.map(name => `--filter=${name}`)], { stdio: "inherit" })
+        NODE
+
+    # Save before tests/builds can write caches or generated files into node_modules.
+    - name: Save installed dependencies
+      if: ${{ inputs.dependency-cache == 'true' && steps.dependencies.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@v6
+      with:
+        path: |
+          node_modules
+          apps/*/node_modules
+          images/*/node_modules
+          templates/*/node_modules
+        key: ${{ steps.dependencies.outputs.cache-primary-key }}
+
+    - name: Restore Turborepo task cache
+      uses: actions/cache@v6
+      with:
+        path: .turbo/cache
+        key: turbo-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ inputs.cache-scope }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+        restore-keys: |
+          turbo-v1-${{ runner.os }}-${{ runner.arch }}-node24-${{ inputs.cache-scope }}-${{ hashFiles('pnpm-lock.yaml') }}-

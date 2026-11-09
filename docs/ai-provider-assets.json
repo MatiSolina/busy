@@ -1,0 +1,54 @@
+{
+  "assets": [
+    {
+      "provider": "chatgpt",
+      "file": "apps/hub/public/ai-providers/chatgpt-white.svg",
+      "source": "https://developers.openai.com/assets/siwc/sign-in-buttons/chatgpt-logo-white.svg",
+      "sourcePage": "https://developers.openai.com/siwc/website",
+      "note": "Official Sign in with ChatGPT button logo asset. Geometry unchanged; only accessible title and formatter-safe SVG markup were added for Busy's UI checks."
+    },
+    {
+      "provider": "grok",
+      "file": "apps/hub/public/ai-providers/grok.png",
+      "source": "https://grok.com/icon-512x512.png",
+      "sourcePage": "https://docs.x.ai/grok/overview",
+      "note": "Official Grok web/app icon served by grok.com. Kept unchanged."
+    },
+    {
+      "provider": "vercel",
+      "file": "apps/hub/public/ai-providers/vercel-white.svg",
+      "source": "https://vercel.com/geist/brands/assets/vercel-logotype-white.svg",
+      "sourcePage": "https://vercel.com/geist/brands",
+      "note": "Official Vercel white logotype asset. Used for AI Gateway and Token Pass labels where the Vercel relationship is explicit. Geometry unchanged; only accessible title and formatter-safe SVG markup were added."
+    },
+    {
+      "provider": "chatgpt",
+      "file": "apps/hub/public/ai-providers/chatgpt-black.svg",
+      "source": "https://developers.openai.com/assets/siwc/sign-in-buttons/chatgpt-logo-black.svg",
+      "sourcePage": "https://developers.openai.com/siwc/website",
+      "note": "Official Sign in with ChatGPT logo for light surfaces. Geometry unchanged; only accessible title and formatter-safe SVG markup were added. Buttons follow the approved Continue with ChatGPT format."
+    },
+    {
+      "provider": "chatgpt",
+      "file": "apps/hub/public/ai-providers/chatgpt-inter-medium.ttf",
+      "source": "https://developers.openai.com/fonts/siwc-inter/Inter-Medium.ttf",
+      "sourcePage": "https://developers.openai.com/siwc/website",
+      "note": "Official button example font. The ChatGPT button uses a 45px height, 12px gap, 21px logo, and 15px medium typography. Corners follow Busy's square interface."
+    },
+    {
+      "provider": "vercel",
+      "file": "apps/hub/public/ai-providers/vercel-mark-black.svg",
+      "source": "https://vercel.com/geist/brands/assets/vercel-symbol-black.svg",
+      "sourcePage": "https://vercel.com/geist/brands",
+      "note": "Official Vercel symbol for light surfaces. Geometry unchanged; only accessible title and formatter-safe SVG markup were added."
+    },
+    {
+      "provider": "vercel",
+      "file": "apps/hub/public/ai-providers/vercel-mark-white.svg",
+      "source": "https://vercel.com/geist/brands/assets/vercel-symbol-white.svg",
+      "sourcePage": "https://vercel.com/geist/brands",
+      "note": "Official Vercel symbol for dark surfaces. Geometry unchanged; only accessible title and formatter-safe SVG markup were added."
+    }
+  ],
+  "retrievedAt": "2026-11-02"
+}

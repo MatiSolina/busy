@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Files
+Comment=The bot's files
+Exec=pcmanfm /data
+Icon=folder
+Terminal=false

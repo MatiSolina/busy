@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "root": true,
+  "extends": ["ultracite/biome/core", "ultracite/biome/vitest"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "origin/main"
+  },
+  "files": {
+    "includes": [
+      "!!**/.claude",
+      "!!**/.backups",
+      "!!**/.playwright-mcp",
+      "!!**/.swc",
+      "!!**/.vitest",
+      "!!**/.eve"
+    ]
+  },
+  "overrides": [
+    {
+      // Eve discovers tools by filename; these names are part of its public API.
+      "includes": [
+        "templates/bot/agent/tools/**",
+        "templates/bot/agent/extensions/*/tools/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": {
+              "level": "error",
+              "options": { "filenameCases": ["snake_case"] }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

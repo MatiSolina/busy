@@ -1,0 +1,23 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "cache": false,
+      "outputs": [".eve/**", ".output/**"]
+    },
+    "test": {
+      "dependsOn": ["hub#bundle-template"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/hub/lib/**",
+        "!$TURBO_ROOT$/apps/hub/lib/**/*.test.ts",
+        "!$TURBO_ROOT$/apps/hub/lib/bots/template.generated.json",
+        "$TURBO_ROOT$/images/bot-base/push.sh",
+        "$TURBO_ROOT$/docs/provenance/find-skills.json"
+      ]
+    },
+    "typecheck": {
+      "outputs": []
+    }
+  }
+}

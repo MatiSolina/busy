@@ -1,0 +1,14 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "test": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/apps/hub/lib/install.ts",
+        "$TURBO_ROOT$/apps/hub/package.json",
+        "$TURBO_ROOT$/apps/hub/app/api/download/**"
+      ],
+      "tags": ["!ci"]
+    }
+  }
+}

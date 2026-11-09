@@ -1,0 +1,161 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "futureFlags": {
+    "affectedUsingTaskInputs": true
+  },
+  "globalDependencies": [
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "biome.jsonc",
+    "vitest.config.ts"
+  ],
+  "globalEnv": [
+    "CI",
+    "HUB_URL",
+    "MCP_APP_HOST_ORIGIN",
+    "MCP_APP_SANDBOX_ORIGIN",
+    "BOT_BASE_IMAGE",
+    "NODE_ENV",
+    "VERCEL",
+    "VERCEL_DEPLOYMENT_ID",
+    "VERCEL_URL"
+  ],
+  "globalPassThroughEnv": [
+    "AI_GATEWAY_API_KEY",
+    "BLOB_READ_WRITE_TOKEN",
+    "BOTS_DOMAIN",
+    "BOT_TRACE_SAMPLE_RATE",
+    "BUSY_APP_SHA256",
+    "BUSY_APP_VERSION",
+    "BUSY_AVATAR_HASH",
+    "BUSY_BASE_SHA",
+    "BUSY_CHATGPT_CLIENT_ID",
+    "BUSY_DEV_NO_AUTH",
+    "BUSY_DISPLAY_NAME",
+    "BUSY_GROK_CLIENT_ID",
+    "BUSY_PASSWORD_HASH",
+    "BUSY_USER",
+    "BUSY_VERCEL_USERS",
+    "CRON_SECRET",
+    "DATABASE_URL",
+    "DATABASE_URL_UNPOOLED",
+    "DEV_RELAY",
+    "DEV_RELAY_URL",
+    "DEV_RELAY_TOKEN_SHA256",
+    "DEV_RELAY_UNTIL",
+    "EVE_EVAL_AUTH_TOKEN",
+    "HISTORY_EMBEDDING_API_KEY",
+    "HISTORY_EMBEDDING_MODEL",
+    "HISTORY_EMBEDDING_URL",
+    "HISTORY_EMBEDDINGS_ENABLED",
+    "HUB_PUBLIC_KEY",
+    "HUB_SIGNING_KEY",
+    "LAZY_TOOLS_BOTS",
+    "LAZY_TOOLS_LEVEL",
+    "RELAY_URL",
+    "SESSION_SECRET",
+    "TOKEN_PASS_API_KEY",
+    "TURBO_TEAM",
+    "TURBO_TOKEN",
+    "BUSY_URL",
+    "CHATGPT_CACHE_CANARY",
+    "FAST_PATH_BOTS",
+    "FAST_PATH_REASONING_EFFORT",
+    "FAST_PATH_ROUTER",
+    "VERCEL_APP_CLIENT_ID",
+    "VERCEL_APP_CLIENT_SECRET",
+    "VERCEL_OIDC_TOKEN",
+    "VERCEL_TEAM_ID",
+    "VERCEL_TEAM_SLUG",
+    "VERCEL_TOKEN"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "!.next/dev/**"],
+      "inputs": ["$TURBO_DEFAULT$", ".env", ".env.*"],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "bundle-template": {
+      "outputs": ["lib/bots/template.generated.json"],
+      "inputs": [
+        "$TURBO_ROOT$/apps/hub/scripts/bundle-template.mjs",
+        "$TURBO_ROOT$/templates/bot/**",
+        "!$TURBO_ROOT$/templates/bot/node_modules/**",
+        "!$TURBO_ROOT$/templates/bot/.vercel/**",
+        "!$TURBO_ROOT$/templates/bot/.eve/**",
+        "!$TURBO_ROOT$/templates/bot/.output/**",
+        "!$TURBO_ROOT$/templates/bot/.turbo/**",
+        "!$TURBO_ROOT$/templates/bot/dist/**",
+        "!$TURBO_ROOT$/templates/bot/**/*.test.ts"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "lint:next": {
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "test": {
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "typecheck": {
+      "outputs": ["*.tsbuildinfo", "**/*.tsbuildinfo"],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "dist": {
+      "cache": false,
+      "outputs": ["dist/**"]
+    },
+    "//#check:repo": {
+      "cache": false,
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "//#check:changed:repo": {
+      "cache": false,
+      "outputs": []
+    },
+    "//#check:staged:repo": {
+      "cache": false,
+      "outputs": []
+    },
+    "//#check:tooling:repo": {
+      "cache": false,
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "//#quality:doctor:repo": {
+      "cache": false,
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    },
+    "//#test:ci-policy": {
+      "inputs": [
+        ".github/scripts/**",
+        "package.json",
+        "turbo.json",
+        "pnpm-lock.yaml",
+        "pnpm-workspace.yaml",
+        "vitest.config.ts",
+        "biome.jsonc",
+        ".gitignore",
+        "apps/*/package.json",
+        "apps/*/turbo.json",
+        "templates/*/package.json",
+        "templates/*/turbo.json",
+        "images/*/package.json",
+        "images/*/turbo.json"
+      ],
+      "outputs": [],
+      "tags": ["ci", "ci:os:ubuntu"]
+    }
+  }
+}

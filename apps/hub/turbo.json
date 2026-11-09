@@ -1,0 +1,25 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["$TURBO_EXTENDS$", "bundle-template"],
+      "env": [
+        "BUSY_VERCEL_USERS",
+        "VERCEL_APP_CLIENT_ID",
+        "VERCEL_APP_CLIENT_SECRET"
+      ],
+      "inputs": ["$TURBO_EXTENDS$"]
+    },
+    "test": {
+      "dependsOn": ["bundle-template"]
+    },
+    "typecheck": {
+      "dependsOn": ["bundle-template"]
+    },
+    "check:runtime": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "tags": ["ci", "ci:os:ubuntu"]
+    }
+  }
+}

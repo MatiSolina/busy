@@ -1,0 +1,147 @@
+# Approved differences between lib/db/schema.ts and apps/hub/drizzle/*.sql.
+# scripts/check-schema-drift.ts runs the real `drizzle-kit push` against a
+# throwaway database built from the migrations and fails on any statement that
+# is not listed here (and on listed lines that no longer occur).
+#
+# These are why `drizzle-kit push` must never run against a database that has
+# data: it would execute every line below. None drops a column, table or CHECK;
+# those can never be approved here. Shrink this file by modelling the SQL in
+# schema.ts; do not add lines to make new drift pass.
+
+# RLS: the migrations enable row level security; lib/db/schema.ts does not model it yet (.enableRLS()).
+ALTER TABLE "ai_subscription_attempts" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_subscription_connections" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "ai_subscription_hosts" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "app_ai_settings" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "app_capabilities" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "app_capability_migrations" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "bot_capabilities" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "bot_section_memberships" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "bot_sections" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_bot_contexts" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_repositories" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_repository_access" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_task_commands" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_task_events" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_tasks" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "fireside_commands" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "firesides" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "history_embeddings" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "library_objects" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "mcp_app_results" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "mcp_connections" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "mcp_provider_clients" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "memory_metadata" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "memory_metadata_events" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "routine_runs" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "routines" DISABLE ROW LEVEL SECURITY;
+
+# Foreign keys: the migrations use PostgreSQL's <table>_<column>_fkey names; drizzle names them <table>_<column>_<target>_<column>_fk. Same columns and actions.
+ALTER TABLE "files" DROP CONSTRAINT "files_object_id_fkey";
+ALTER TABLE "bot_capabilities" DROP CONSTRAINT "bot_capabilities_bot_id_fkey";
+ALTER TABLE "routines" DROP CONSTRAINT "routines_bot_id_fkey";
+ALTER TABLE "routine_runs" DROP CONSTRAINT "routine_runs_bot_id_fkey";
+ALTER TABLE "routine_runs" DROP CONSTRAINT "routine_runs_routine_id_fkey";
+ALTER TABLE "bot_section_memberships" DROP CONSTRAINT "bot_section_memberships_bot_id_fkey";
+ALTER TABLE "bot_section_memberships" DROP CONSTRAINT "bot_section_memberships_section_id_fkey";
+ALTER TABLE "memory_metadata_events" DROP CONSTRAINT "memory_metadata_events_bot_slug_fkey";
+ALTER TABLE "code_repositories" DROP CONSTRAINT "code_repositories_connection_id_fkey";
+ALTER TABLE "code_bot_contexts" DROP CONSTRAINT "code_bot_contexts_bot_id_fkey";
+ALTER TABLE "code_bot_contexts" DROP CONSTRAINT "code_bot_contexts_repository_id_fkey";
+ALTER TABLE "code_tasks" DROP CONSTRAINT "code_tasks_bot_id_fkey";
+ALTER TABLE "code_tasks" DROP CONSTRAINT "code_tasks_repository_id_fkey";
+ALTER TABLE "code_task_commands" DROP CONSTRAINT "code_task_commands_task_id_fkey";
+ALTER TABLE "mcp_app_results" DROP CONSTRAINT "mcp_app_results_bot_id_fkey";
+ALTER TABLE "mcp_app_results" DROP CONSTRAINT "mcp_app_results_connection_id_fkey";
+ALTER TABLE "firesides" DROP CONSTRAINT "firesides_bot_id_fkey";
+ALTER TABLE "fireside_commands" DROP CONSTRAINT "fireside_commands_fireside_id_fkey";
+ALTER TABLE "code_repository_access" DROP CONSTRAINT "code_repository_access_bot_id_fkey";
+ALTER TABLE "code_repository_access" DROP CONSTRAINT "code_repository_access_repository_id_fkey";
+ALTER TABLE "code_task_events" DROP CONSTRAINT "code_task_events_task_id_fkey";
+ALTER TABLE "memory_metadata" DROP CONSTRAINT "memory_metadata_bot_slug_fkey";
+ALTER TABLE "history_embeddings" DROP CONSTRAINT "history_embeddings_bot_id_fkey";
+ALTER TABLE "files" ADD CONSTRAINT "files_object_id_library_objects_id_fk" FOREIGN KEY ("object_id") REFERENCES "public"."library_objects"("id") ON DELETE restrict ON UPDATE no action;
+ALTER TABLE "bot_capabilities" ADD CONSTRAINT "bot_capabilities_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "routines" ADD CONSTRAINT "routines_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "routine_runs" ADD CONSTRAINT "routine_runs_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "routine_runs" ADD CONSTRAINT "routine_runs_routine_id_routines_id_fk" FOREIGN KEY ("routine_id") REFERENCES "public"."routines"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "bot_section_memberships" ADD CONSTRAINT "bot_section_memberships_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "bot_section_memberships" ADD CONSTRAINT "bot_section_memberships_section_id_bot_sections_id_fk" FOREIGN KEY ("section_id") REFERENCES "public"."bot_sections"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "memory_metadata_events" ADD CONSTRAINT "memory_metadata_events_bot_slug_bots_slug_fk" FOREIGN KEY ("bot_slug") REFERENCES "public"."bots"("slug") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "code_repositories" ADD CONSTRAINT "code_repositories_connection_id_mcp_connections_id_fk" FOREIGN KEY ("connection_id") REFERENCES "public"."mcp_connections"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "code_bot_contexts" ADD CONSTRAINT "code_bot_contexts_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "code_bot_contexts" ADD CONSTRAINT "code_bot_contexts_repository_id_code_repositories_id_fk" FOREIGN KEY ("repository_id") REFERENCES "public"."code_repositories"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "code_tasks" ADD CONSTRAINT "code_tasks_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "code_tasks" ADD CONSTRAINT "code_tasks_repository_id_code_repositories_id_fk" FOREIGN KEY ("repository_id") REFERENCES "public"."code_repositories"("id") ON DELETE set null ON UPDATE no action;
+ALTER TABLE "code_task_commands" ADD CONSTRAINT "code_task_commands_task_id_code_tasks_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."code_tasks"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "mcp_app_results" ADD CONSTRAINT "mcp_app_results_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "mcp_app_results" ADD CONSTRAINT "mcp_app_results_connection_id_mcp_connections_id_fk" FOREIGN KEY ("connection_id") REFERENCES "public"."mcp_connections"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "firesides" ADD CONSTRAINT "firesides_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "fireside_commands" ADD CONSTRAINT "fireside_commands_fireside_id_firesides_id_fk" FOREIGN KEY ("fireside_id") REFERENCES "public"."firesides"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "code_repository_access" ADD CONSTRAINT "code_repository_access_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "code_repository_access" ADD CONSTRAINT "code_repository_access_repository_id_code_repositories_id_fk" FOREIGN KEY ("repository_id") REFERENCES "public"."code_repositories"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "code_task_events" ADD CONSTRAINT "code_task_events_task_id_code_tasks_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."code_tasks"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "memory_metadata" ADD CONSTRAINT "memory_metadata_bot_slug_bots_slug_fk" FOREIGN KEY ("bot_slug") REFERENCES "public"."bots"("slug") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "history_embeddings" ADD CONSTRAINT "history_embeddings_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+
+# Primary and unique keys: same columns, different generated names (or a drizzle-kit re-creation of an identical key).
+ALTER TABLE "bot_capabilities" DROP CONSTRAINT "bot_capabilities_bot_id_kind_name_key";
+ALTER TABLE "app_capabilities" DROP CONSTRAINT "app_capabilities_kind_name_key";
+ALTER TABLE "memory_metadata_events" DROP CONSTRAINT "memory_metadata_events_bot_slug_change_key_key";
+ALTER TABLE "ai_subscription_hosts" DROP CONSTRAINT "ai_subscription_hosts_host_id_key";
+ALTER TABLE "library_objects" DROP CONSTRAINT "library_objects_pathname_key";
+ALTER TABLE "library_objects" DROP CONSTRAINT "library_objects_sha256_key";
+ALTER TABLE "code_tasks" DROP CONSTRAINT "code_tasks_origin_unique";
+ALTER TABLE "code_task_commands" DROP CONSTRAINT "code_task_commands_message_unique";
+ALTER TABLE "mcp_app_results" DROP CONSTRAINT "mcp_app_results_call_unique";
+ALTER TABLE "firesides" DROP CONSTRAINT "firesides_origin_id_key";
+ALTER TABLE "code_task_events" DROP CONSTRAINT "code_task_events_source_unique";
+ALTER TABLE "code_repository_access" DROP CONSTRAINT "code_repository_access_pkey";
+ALTER TABLE "code_task_events" DROP CONSTRAINT "code_task_events_pkey";
+ALTER TABLE "memory_metadata" DROP CONSTRAINT "memory_metadata_pkey";
+ALTER TABLE "history_embeddings" DROP CONSTRAINT "history_embeddings_pkey";
+ALTER TABLE "code_repository_access" ADD CONSTRAINT "code_repository_access_bot_id_repository_id_pk" PRIMARY KEY("bot_id","repository_id");
+ALTER TABLE "code_task_events" ADD CONSTRAINT "code_task_events_task_id_seq_pk" PRIMARY KEY("task_id","seq");
+ALTER TABLE "memory_metadata" ADD CONSTRAINT "memory_metadata_bot_slug_entry_id_pk" PRIMARY KEY("bot_slug","entry_id");
+ALTER TABLE "history_embeddings" ADD CONSTRAINT "history_embeddings_bot_id_source_source_id_model_pk" PRIMARY KEY("bot_id","source","source_id","model");
+ALTER TABLE "events" DROP CONSTRAINT "events_session_id_line_index_pk";
+ALTER TABLE "events" ADD CONSTRAINT "events_session_id_line_index_pk" PRIMARY KEY("session_id","line","index");
+ALTER TABLE "fast_slot_reservations" DROP CONSTRAINT "fast_slot_reservations_session_id_line_slot_index_pk";
+ALTER TABLE "fast_slot_reservations" ADD CONSTRAINT "fast_slot_reservations_session_id_line_slot_index_pk" PRIMARY KEY("session_id","line","slot_index");
+ALTER TABLE "bot_capabilities" ADD CONSTRAINT "bot_capabilities_bot_id_kind_name_unique" UNIQUE("bot_id","kind","name");
+ALTER TABLE "app_capabilities" ADD CONSTRAINT "app_capabilities_kind_name_unique" UNIQUE("kind","name");
+ALTER TABLE "memory_metadata_events" ADD CONSTRAINT "memory_metadata_events_bot_slug_change_key_unique" UNIQUE("bot_slug","change_key");
+ALTER TABLE "ai_subscription_hosts" ADD CONSTRAINT "ai_subscription_hosts_host_id_unique" UNIQUE("host_id");
+ALTER TABLE "library_objects" ADD CONSTRAINT "library_objects_pathname_unique" UNIQUE("pathname");
+ALTER TABLE "library_objects" ADD CONSTRAINT "library_objects_sha256_unique" UNIQUE("sha256");
+ALTER TABLE "code_tasks" ADD CONSTRAINT "code_tasks_origin_unique" UNIQUE("bot_id","source_session_id","source_call_id");
+ALTER TABLE "code_task_commands" ADD CONSTRAINT "code_task_commands_message_unique" UNIQUE("task_id","message_id");
+ALTER TABLE "mcp_app_results" ADD CONSTRAINT "mcp_app_results_call_unique" UNIQUE("bot_id","session_id","call_id","connection_id");
+ALTER TABLE "firesides" ADD CONSTRAINT "firesides_origin_id_unique" UNIQUE("origin_id");
+ALTER TABLE "code_task_events" ADD CONSTRAINT "code_task_events_source_unique" UNIQUE("task_id","source_key");
+
+# Indexes that exist only in SQL (0011, 0017, 0018, 0023) or whose column order/direction drizzle does not model.
+DROP INDEX "files_stale_until_idx";
+DROP INDEX "messages_history_bot_created_idx";
+DROP INDEX "messages_history_fts_idx";
+DROP INDEX "routines_due_idx";
+DROP INDEX "events_history_bot_created_idx";
+DROP INDEX "events_history_reply_fts_idx";
+DROP INDEX "memory_metadata_bot_updated_idx";
+DROP INDEX "history_embeddings_bot_model_idx";
+CREATE INDEX "memory_metadata_bot_updated_idx" ON "memory_metadata" USING btree ("bot_slug","updated_at","entry_id");
+CREATE INDEX "history_embeddings_bot_model_idx" ON "history_embeddings" USING btree ("bot_id","model","updated_at") WHERE "history_embeddings"."embedding" IS NOT NULL;
+ALTER TABLE "bot_computers" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "bot_tombstones" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "code_task_bot_shutdowns" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "fast_slot_reservations" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "fireside_runners" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "routine_schedule_outbox" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "bot_session_openings" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "bot_sessions" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "message_delivery_attempts" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "session_recoveries" DISABLE ROW LEVEL SECURITY;
+ALTER TABLE "message_delivery_attempts" DROP CONSTRAINT "message_delivery_attempts_bot_id_fkey";
+ALTER TABLE "session_recoveries" DROP CONSTRAINT "session_recoveries_bot_id_fkey";
+ALTER TABLE "message_delivery_attempts" ADD CONSTRAINT "message_delivery_attempts_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "session_recoveries" ADD CONSTRAINT "session_recoveries_bot_id_bots_id_fk" FOREIGN KEY ("bot_id") REFERENCES "public"."bots"("id") ON DELETE cascade ON UPDATE no action;

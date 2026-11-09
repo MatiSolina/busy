@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Terminal
+Exec=lxterminal --working-directory=/data
+Icon=utilities-terminal
+Terminal=false

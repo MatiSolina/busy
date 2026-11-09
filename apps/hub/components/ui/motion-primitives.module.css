@@ -1,0 +1,15 @@
+/* Portal primitives need their own reduced-motion guard because they mount under body. */
+@media (prefers-reduced-motion: reduce) {
+  .motionSurface {
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+[data-reduced="true"] .motionSurface,
+.motionSurface[data-reduced="true"] {
+  transition-duration: 0s !important;
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+}

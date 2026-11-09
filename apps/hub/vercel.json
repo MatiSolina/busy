@@ -1,0 +1,76 @@
+{
+  "buildCommand": "pnpm exec turbo run build --filter=hub",
+  "functions": {
+    "app/.well-known/durable-harness/v1/fx/route.ts": {
+      "experimentalTriggers": [
+        {
+          "type": "queue/v2beta",
+          "topic": "__libfx_wkf_workflow_session",
+          "retryAfterSeconds": 5
+        }
+      ],
+      "maxDuration": 300
+    },
+    "app/api/queues/routine-runs/route.ts": {
+      "experimentalTriggers": [
+        {
+          "type": "queue/v2beta",
+          "topic": "routine-runs"
+        }
+      ],
+      "maxDuration": 300
+    }
+  },
+  "schedules": {
+    "sync": {
+      "schedule": "0 * * * *",
+      "path": "/api/cron/sync",
+      "requestMethod": "GET"
+    },
+    "message-recovery": {
+      "schedule": "*/10 * * * *",
+      "path": "/api/cron/message-recovery",
+      "requestMethod": "GET"
+    },
+    "deploys": {
+      "schedule": "*/5 * * * *",
+      "path": "/api/cron/deploys",
+      "requestMethod": "GET"
+    },
+    "code-tasks": {
+      "schedule": "* * * * *",
+      "path": "/api/cron/code-tasks",
+      "requestMethod": "GET"
+    },
+    "routines": {
+      "schedule": "*/5 * * * *",
+      "path": "/api/cron/routines",
+      "requestMethod": "GET"
+    },
+    "code-task-cleanup": {
+      "schedule": "17 * * * *",
+      "path": "/api/cron/code-task-cleanup",
+      "requestMethod": "GET"
+    },
+    "history-embeddings": {
+      "schedule": "*/15 * * * *",
+      "path": "/api/cron/history-embeddings",
+      "requestMethod": "GET"
+    },
+    "subscription-refresh": {
+      "schedule": "*/15 * * * *",
+      "path": "/api/cron/subscription-refresh",
+      "requestMethod": "GET"
+    },
+    "library-verification": {
+      "schedule": "*/15 * * * *",
+      "path": "/api/cron/library-verification",
+      "requestMethod": "GET"
+    },
+    "latency-probe": {
+      "schedule": "*/30 * * * *",
+      "path": "/api/cron/latency-probe",
+      "requestMethod": "GET"
+    }
+  }
+}

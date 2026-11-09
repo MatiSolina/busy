@@ -1,0 +1,140 @@
+{
+  "license": "Simple Icons assets are distributed under CC0-1.0; see https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md. Context7 and DeepWiki assets are copied from official provider documentation/site responses.",
+  "icons": {
+    "linear": {
+      "path": "/mcp-icons/linear.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/linear.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "notion": {
+      "path": "/mcp-icons/notion.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/notion.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "sentry": {
+      "path": "/mcp-icons/sentry.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/sentry.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "atlassian": {
+      "path": "/mcp-icons/atlassian.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/atlassian.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "neon": {
+      "path": "/mcp-icons/neon.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/neon.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "stripe": {
+      "path": "/mcp-icons/stripe.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/stripe.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "paypal": {
+      "path": "/mcp-icons/paypal.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/paypal.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "todoist": {
+      "path": "/mcp-icons/todoist.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/todoist.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "supabase": {
+      "path": "/mcp-icons/supabase.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/supabase.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "vercel": {
+      "path": "/mcp-icons/vercel.svg",
+      "source": "https://vercel.com/geist/brands/assets/vercel-symbol-black.svg",
+      "provider": "Vercel brand assets",
+      "license": "Vercel brand asset; use for product identification",
+      "note": "Official black Vercel symbol for the marketplace's light icon tile. Reused from the existing local AI provider asset with unchanged geometry."
+    },
+    "posthog": {
+      "path": "/mcp-icons/posthog.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/posthog.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "railway": {
+      "path": "/mcp-icons/railway.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/railway.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "context7": {
+      "path": "/mcp-icons/context7.png",
+      "source": "https://context7.com/favicon.ico",
+      "provider": "Context7 official site",
+      "license": "provider favicon; use limited to product identification"
+    },
+    "deepwiki": {
+      "path": "/mcp-icons/deepwiki.png",
+      "source": "https://docs.devin.ai/mintlify-assets/_mintlify/favicons/cognitionai/Ycul7J1XWDV1FX48/_generated/favicon/android-chrome-192x192.png",
+      "provider": "Devin Docs official DeepWiki documentation",
+      "license": "provider favicon; use limited to product identification",
+      "note": "The official DeepWiki endpoint exposes an ASCII landing page; this is the official provider favicon used by its DeepWiki MCP documentation."
+    },
+    "github": {
+      "path": "/mcp-icons/github.svg",
+      "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/github.svg",
+      "provider": "Simple Icons",
+      "license": "CC0-1.0"
+    },
+    "gmail": {
+      "path": "/mcp-icons/gmail.svg",
+      "source": "https://fonts.gstatic.com/s/i/productlogos/gmail_2020q4/v8/192px.svg",
+      "provider": "Google product logos",
+      "license": "Google brand asset; use for product identification"
+    },
+    "googledrive": {
+      "path": "/mcp-icons/googledrive.svg",
+      "source": "https://fonts.gstatic.com/s/i/productlogos/drive_2020q4/v8/192px.svg",
+      "provider": "Google product logos",
+      "license": "Google brand asset; use for product identification"
+    },
+    "googlecalendar": {
+      "path": "/mcp-icons/googlecalendar.svg",
+      "source": "https://fonts.gstatic.com/s/i/productlogos/calendar_2020q4/v8/192px.svg",
+      "provider": "Google product logos",
+      "license": "Google brand asset; use for product identification"
+    },
+    "googledocs": {
+      "path": "/mcp-icons/googledocs.svg",
+      "source": "https://fonts.gstatic.com/s/i/productlogos/docs_2020q4/v1/192px.svg",
+      "provider": "Google product logos",
+      "license": "Google brand asset; use for product identification"
+    },
+    "googlesheets": {
+      "path": "/mcp-icons/googlesheets.svg",
+      "source": "https://fonts.gstatic.com/s/i/productlogos/sheets_2020q4/v8/192px.svg",
+      "provider": "Google product logos",
+      "license": "Google brand asset; use for product identification"
+    },
+    "googleslides": {
+      "path": "/mcp-icons/googleslides.svg",
+      "source": "https://fonts.gstatic.com/s/i/productlogos/slides_2020q4/v1/192px.svg",
+      "provider": "Google product logos",
+      "license": "Google brand asset; use for product identification"
+    }
+  },
+  "validation": {
+    "svgSanitized": true,
+    "checks": [
+      "No script, style, external image, event handler, or external stylesheet references",
+      "All files are self-hosted under apps/hub/public/mcp-icons"
+    ]
+  }
+}

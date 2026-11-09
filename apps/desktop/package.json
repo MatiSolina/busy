@@ -1,0 +1,41 @@
+{
+  "name": "busy-desktop",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "main": "main.mjs",
+  "scripts": {
+    "dist": "electron-builder --mac zip --arm64 --publish never",
+    "start": "electron .",
+    "test": "pnpm -C ../.. exec vitest run apps/desktop"
+  },
+  "devDependencies": {
+    "@vercel/blob": "2.8.2",
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0",
+    "fast-check": "4.10.2",
+    "vitest": "5.0.5"
+  },
+  "build": {
+    "appId": "com.matisolina.busy",
+    "productName": "Busy",
+    "files": [
+      "main.mjs",
+      "preload.cjs",
+      "subscription-auth.mjs",
+      "url-policy.mjs",
+      "update.mjs",
+      "icon.png"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "icon.png",
+      "identity": "-",
+      "hardenedRuntime": false
+    },
+    "directories": {
+      "output": "dist"
+    }
+  },
+  "productName": "Busy"
+}

@@ -1,0 +1,14 @@
+{"$eve":"heartbeat"}
+{"at":"2026-10-29T18:01:08.548Z","facts":[{"data":{"runtime":{"agentId":"qa-grok-1","agentName":"qa-grok-1","eveVersion":"0.88.0"}},"type":"session.started"},{"data":{"deliveryId":"33928fec-868d-4964-9ed7-bfffa52ad551","principal":{"id":"fleet-manager","type":"app"},"source":{"channel":"channel:eve"}},"type":"delivery.admitted"}]}
+{"at":"2026-10-29T18:01:08.552Z","facts":[{"data":{"cause":{"deliveryId":"33928fec-868d-4964-9ed7-bfffa52ad551"},"follows":null,"turnId":"turn_0"},"type":"turn.started","scope":{"turnId":"turn_0"}},{"data":{"deliveryId":"33928fec-868d-4964-9ed7-bfffa52ad551","parts":[{"kind":"text","text":"Say hello to QA Grok."}],"turnId":"turn_0"},"type":"delivery.consumed","scope":{"turnId":"turn_0"}}]}
+{"at":"2026-10-29T18:01:08.554Z","facts":[{"data":{"owner":{"turnId":"turn_0"},"runId":"run_0"},"type":"model.requested","scope":{"runId":"run_0","turnId":"turn_0"}}]}
+{"at":"2026-10-29T18:01:08.559Z","facts":[{"data":{"attempt":0,"modelId":"openai/gpt-5-mini","runId":"run_0"},"type":"model.started","scope":{"runId":"run_0","turnId":"turn_0"}}]}
+{"progress":{"data":{"delta":"Hello","kind":"text","partId":"run_0.0"},"scope":{"runId":"run_0","turnId":"turn_0"},"type":"content.delta"}}
+{"progress":{"data":{"delta":",","partId":"run_0.0"},"type":"content.delta"}}
+{"progress":{"data":{"delta":" QA","partId":"run_0.0"},"type":"content.delta"}}
+{"progress":{"data":{"delta":" Gro","partId":"run_0.0"},"type":"content.delta"}}
+{"progress":{"data":{"delta":"k","partId":"run_0.0"},"type":"content.delta"}}
+{"progress":{"data":{"delta":"!","partId":"run_0.0"},"type":"content.delta"}}
+{"at":"2026-10-29T18:01:11.439Z","facts":[{"data":{"kind":"text","partId":"run_0.0","phase":"reply","runId":"run_0","value":"Hello, QA Grok!"},"type":"content.completed","scope":{"runId":"run_0","turnId":"turn_0"}}]}
+{"at":"2026-10-29T18:01:11.442Z","facts":[{"data":{"finishReason":"stop","outcome":"completed","runId":"run_0","generationId":"gen_01M64D59PQQV71PN4Q9BX880ZC"},"type":"model.settled","scope":{"runId":"run_0","turnId":"turn_0"}},{"data":{"kind":"model","owner":{"runId":"run_0"},"usage":{"cacheReadTokens":0,"cacheWriteTokens":0,"costUsd":0.00070325,"inputTokens":2125,"outputTokens":86}},"type":"usage.recorded","scope":{"runId":"run_0","turnId":"turn_0"}}]}
+{"at":"2026-10-29T18:01:11.457Z","facts":[{"data":{"outcome":"completed","reply":["run_0.0"],"turnId":"turn_0"},"type":"turn.settled","scope":{"turnId":"turn_0"}},{"data":{"deliveryId":"33928fec-868d-4964-9ed7-bfffa52ad551","outcome":"handled","turnId":"turn_0"},"type":"delivery.settled"}]}
