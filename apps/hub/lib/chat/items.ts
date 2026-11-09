@@ -614,6 +614,9 @@ export function createChatViewProjector(
           break;
         }
         const taskItem: ChatItem = {
+          ...(existingItem?.kind === "activity" && existingItem.detail
+            ? { detail: existingItem.detail }
+            : {}),
           id: taskId,
           kind: "activity",
           state: "running",
@@ -743,6 +746,7 @@ export function createChatViewProjector(
         }
         const capability = (d.capability ?? {}) as {
           kind?: string;
+          label?: string;
           name?: string;
         };
         const { input } = d;
@@ -793,7 +797,10 @@ export function createChatViewProjector(
           });
         } else if (!FILE_TOOLS.has(name)) {
           push({
-            detail: detailOf(d.input),
+            // A child task has no command or path: show the first line of its brief.
+            detail:
+              detailOf(d.input) ??
+              (capability.kind === "agent" ? capability.label : undefined),
             id: callId,
             kind: "activity",
             state: "running",

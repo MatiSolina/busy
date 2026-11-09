@@ -166,6 +166,7 @@ describe("instructions: the text", () => {
   it("defines a durable delegation contract for long work", () => {
     const how = section(CONTENT, "How you work");
     expect(how).toContain("built-in `agent` tool");
+    expect(how).toContain("first write one short line");
     expect(how).toContain(
       "A delegated child session must not address the user or call `send_file`"
     );

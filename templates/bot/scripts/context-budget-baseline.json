@@ -7,10 +7,10 @@
       "toolBytes": 58023,
       "promptToolBytes": 43350,
       "deferredToolBytes": 14673,
-      "instructionsBytes": 21802,
+      "instructionsBytes": 21960,
       "guideBytes": 1378,
-      "systemBytes": 23180,
-      "promptBytes": 66530
+      "systemBytes": 23338,
+      "promptBytes": 66688
     },
     "on": {
       "toolCount": 84,
@@ -19,10 +19,10 @@
       "toolBytes": 58817,
       "promptToolBytes": 23945,
       "deferredToolBytes": 34872,
-      "instructionsBytes": 21934,
+      "instructionsBytes": 22092,
       "guideBytes": 1378,
-      "systemBytes": 23312,
-      "promptBytes": 47257
+      "systemBytes": 23470,
+      "promptBytes": 47415
     },
     "core": {
       "toolCount": 84,
@@ -31,10 +31,10 @@
       "toolBytes": 59155,
       "promptToolBytes": 10881,
       "deferredToolBytes": 48274,
-      "instructionsBytes": 22102,
+      "instructionsBytes": 22260,
       "guideBytes": 1378,
-      "systemBytes": 23480,
-      "promptBytes": 34361
+      "systemBytes": 23638,
+      "promptBytes": 34519
     }
   },
   "peerCount": 8,

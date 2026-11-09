@@ -38,6 +38,36 @@ describe("eve task and interaction projections", () => {
     ]);
   });
 
+  it("keeps the brief of a child task next to its label", () => {
+    const rows = [
+      row(0, "turn.started", { turnId: "turn-1" }),
+      row(1, "call.requested", {
+        callId: "call-1",
+        capability: { kind: "agent", label: "Review the repo.", name: "agent" },
+        input: { message: "Review the repo. Return a summary." },
+      }),
+      row(2, "task.started", {
+        kind: "agent",
+        name: "agent",
+        startedBy: { callId: "call-1" },
+        taskId: "task-1",
+      }),
+    ];
+    expect(view(rows).items.filter((item) => item.kind === "activity")).toEqual(
+      [
+        {
+          detail: "Review the repo.",
+          id: "task-1",
+          kind: "activity",
+          state: "running",
+          taskId: "task-1",
+          taskKind: "agent",
+          tool: "agent",
+        },
+      ]
+    );
+  });
+
   it.each([
     ["failed", "error", "worker failed"],
     ["cancelled", "stopped", "worker cancelled"],
